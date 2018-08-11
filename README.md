@@ -46,61 +46,74 @@ service "zk-2" created
 Check the pods and services:
 
 ```sh
-$ kubectl get pods -l app=zk
-NAME                       READY     STATUS    RESTARTS   AGE
-zk-0-2081291772-zwlwk      1/1       Running   0          5s
-zk-1-3337616897-125xs      1/1       Running   0          5s
-zk-2-303496710-jdznc       1/1       Running   0          5s
-
-$ kubectl get svc -l app=zk
-NAME         CLUSTER-IP   EXTERNAL-IP   PORT(S)                                        AGE
-zk-0         10.0.0.67    <pending>     2181:32108/TCP,2888:30697/TCP,3888:31436/TCP   2m
-zk-1         10.0.0.18    <pending>     2181:31410/TCP,2888:31117/TCP,3888:32687/TCP   2m
-zk-2         10.0.0.106   <pending>     2181:32339/TCP,2888:31346/TCP,3888:30378/TCP   2m
-
+[root@k8sMaster ~]# kubectl get pod -o wide
+NAME                    READY     STATUS    RESTARTS   AGE       IP             NODE
+zk-1-7c8cc9889d-xcf9l   1/1       Running   0          3d        172.18.55.2    k8snode01
+zk-2-7d8f45965c-m82z4   1/1       Running   0          3d        172.18.101.3   k8snode02
+zk-3-5f877bc77b-jr6r5   1/1       Running   0          3d        172.18.87.3    k8snode03
 ```
 
 Verify the cluster start correct or not
 
 ```sh
-kubectl exec -ti zk-0-2081291772-zwlwk -- /bin/bash
-bash-4.3# zkCli.sh -server zk2:2181 ls /
-Connecting to zk2:2181
-2017-01-20 02:16:52,753 [myid:] - INFO  [main:Environment@100] - Client environment:zookeeper.version=3.4.9-1757313, built on 08/23/2016 06:50 GMT
-2017-01-20 02:16:52,757 [myid:] - INFO  [main:Environment@100] - Client environment:host.name=zk1-4074261018-dbjnw
-2017-01-20 02:16:52,759 [myid:] - INFO  [main:Environment@100] - Client environment:java.version=1.8.0_111-internal
-2017-01-20 02:16:52,767 [myid:] - INFO  [main:Environment@100] - Client environment:java.vendor=Oracle Corporation
-2017-01-20 02:16:52,768 [myid:] - INFO  [main:Environment@100] - Client environment:java.home=/usr/lib/jvm/java-1.8-openjdk/jre
-2017-01-20 02:16:52,770 [myid:] - INFO  [main:Environment@100] - Client environment:java.class.path=/zookeeper-3.4.9/bin/../build/classes:/zookeeper-3.4.9/bin/../build/lib/*.jar:/zookeeper-3.4.9/bin/../lib/slf4j-log4j12-1.6.1.jar:/zookeeper-3.4.9/bin/../lib/slf4j-api-1.6.1.jar:/zookeeper-3.4.9/bin/../lib/netty-3.10.5.Final.jar:/zookeeper-3.4.9/bin/../lib/log4j-1.2.16.jar:/zookeeper-3.4.9/bin/../lib/jline-0.9.94.jar:/zookeeper-3.4.9/bin/../zookeeper-3.4.9.jar:/zookeeper-3.4.9/bin/../src/java/lib/*.jar:/conf:
-2017-01-20 02:16:52,772 [myid:] - INFO  [main:Environment@100] - Client environment:java.library.path=/usr/lib/jvm/java-1.8-openjdk/jre/lib/amd64/server:/usr/lib/jvm/java-1.8-openjdk/jre/lib/amd64:/usr/lib/jvm/java-1.8-openjdk/jre/../lib/amd64:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
-2017-01-20 02:16:52,772 [myid:] - INFO  [main:Environment@100] - Client environment:java.io.tmpdir=/tmp
-2017-01-20 02:16:52,774 [myid:] - INFO  [main:Environment@100] - Client environment:java.compiler=<NA>
-2017-01-20 02:16:52,775 [myid:] - INFO  [main:Environment@100] - Client environment:os.name=Linux
-2017-01-20 02:16:52,776 [myid:] - INFO  [main:Environment@100] - Client environment:os.arch=amd64
-2017-01-20 02:16:52,777 [myid:] - INFO  [main:Environment@100] - Client environment:os.version=4.4.14-boot2docker
-2017-01-20 02:16:52,777 [myid:] - INFO  [main:Environment@100] - Client environment:user.name=root
-2017-01-20 02:16:52,777 [myid:] - INFO  [main:Environment@100] - Client environment:user.home=/root
-2017-01-20 02:16:52,777 [myid:] - INFO  [main:Environment@100] - Client environment:user.dir=/zookeeper-3.4.9
-2017-01-20 02:16:52,782 [myid:] - INFO  [main:ZooKeeper@438] - Initiating client connection, connectString=zk2:2181 sessionTimeout=30000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@69d0a921
-2017-01-20 02:16:52,871 [myid:] - INFO  [main-SendThread(zk2.default.svc.cluster.local:2181):ClientCnxn$SendThread@1032] - Opening socket connection to server zk2.default.svc.cluster.local/10.0.0.45:2181. Will not attempt to authenticate using SASL (unknown error)
-2017-01-20 02:16:52,953 [myid:] - INFO  [main-SendThread(zk2.default.svc.cluster.local:2181):ClientCnxn$SendThread@876] - Socket connection established to zk2.default.svc.cluster.local/10.0.0.45:2181, initiating session
-2017-01-20 02:16:53,171 [myid:] - INFO  [main-SendThread(zk2.default.svc.cluster.local:2181):ClientCnxn$SendThread@1299] - Session establishment complete on server zk2.default.svc.cluster.local/10.0.0.45:2181, sessionid = 0x259b9a4bf980000, negotiated timeout = 30000
+bash-4.4# zkCli.sh -timeout 5000 -server zk-1:2181
+Connecting to zk-1:2181
+2018-08-11 09:48:58,775 [myid:] - INFO  [main:Environment@100] - Client environment:zookeeper.version=3.4.13-2d71af4dbe22557fda74f9a9b4309b15a7487f03, built on 06/29/2018 04:05 GMT
+2018-08-11 09:48:58,780 [myid:] - INFO  [main:Environment@100] - Client environment:host.name=zk-1
+2018-08-11 09:48:58,781 [myid:] - INFO  [main:Environment@100] - Client environment:java.version=1.8.0_171
+2018-08-11 09:48:58,786 [myid:] - INFO  [main:Environment@100] - Client environment:java.vendor=Oracle Corporation
+2018-08-11 09:48:58,786 [myid:] - INFO  [main:Environment@100] - Client environment:java.home=/usr/lib/jvm/java-1.8-openjdk/jre
+2018-08-11 09:48:58,786 [myid:] - INFO  [main:Environment@100] - Client environment:java.class.path=/zookeeper-3.4.13/bin/../build/classes:/zookeeper-3.4.13/bin/../build/lib/*.jar:/zookeeper-3.4.13/bin/../lib/slf4j-log4j12-1.7.25.jar:/zookeeper-3.4.13/bin/../lib/slf4j-api-1.7.25.jar:/zookeeper-3.4.13/bin/../lib/netty-3.10.6.Final.jar:/zookeeper-3.4.13/bin/../lib/log4j-1.2.17.jar:/zookeeper-3.4.13/bin/../lib/jline-0.9.94.jar:/zookeeper-3.4.13/bin/../lib/audience-annotations-0.5.0.jar:/zookeeper-3.4.13/bin/../zookeeper-3.4.13.jar:/zookeeper-3.4.13/bin/../src/java/lib/*.jar:/conf:
+2018-08-11 09:48:58,787 [myid:] - INFO  [main:Environment@100] - Client environment:java.library.path=/usr/lib/jvm/java-1.8-openjdk/jre/lib/amd64/server:/usr/lib/jvm/java-1.8-openjdk/jre/lib/amd64:/usr/lib/jvm/java-1.8-openjdk/jre/../lib/amd64:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+2018-08-11 09:48:58,787 [myid:] - INFO  [main:Environment@100] - Client environment:java.io.tmpdir=/tmp
+2018-08-11 09:48:58,787 [myid:] - INFO  [main:Environment@100] - Client environment:java.compiler=<NA>
+2018-08-11 09:48:58,788 [myid:] - INFO  [main:Environment@100] - Client environment:os.name=Linux
+2018-08-11 09:48:58,788 [myid:] - INFO  [main:Environment@100] - Client environment:os.arch=amd64
+2018-08-11 09:48:58,788 [myid:] - INFO  [main:Environment@100] - Client environment:os.version=3.10.0-862.el7.x86_64
+2018-08-11 09:48:58,788 [myid:] - INFO  [main:Environment@100] - Client environment:user.name=root
+2018-08-11 09:48:58,788 [myid:] - INFO  [main:Environment@100] - Client environment:user.home=/root
+2018-08-11 09:48:58,789 [myid:] - INFO  [main:Environment@100] - Client environment:user.dir=/zookeeper-3.4.13
+2018-08-11 09:48:58,791 [myid:] - INFO  [main:ZooKeeper@442] - Initiating client connection, connectString=zk-1:2181 sessionTimeout=5000 watcher=org.apache.zookeeper.ZooKeeperMain$MyWatcher@4b85612c
+Welcome to ZooKeeper!
+2018-08-11 09:48:58,842 [myid:] - INFO  [main-SendThread(zk-1:2181):ClientCnxn$SendThread@1029] - Opening socket connection to server zk-1/172.18.55.2:2181. Will not attempt to authenticate using SASL (unknown error)
+JLine support is enabled
+2018-08-11 09:48:59,007 [myid:] - INFO  [main-SendThread(zk-1:2181):ClientCnxn$SendThread@879] - Socket connection established to zk-1/172.18.55.2:2181, initiating session
+2018-08-11 09:48:59,048 [myid:] - INFO  [main-SendThread(zk-1:2181):ClientCnxn$SendThread@1303] - Session establishment complete on server zk-1/172.18.55.2:2181, sessionid = 0x100010c6f450005, negotiated timeout = 5000
 
 WATCHER::
 
 WatchedEvent state:SyncConnected type:None path:null
-[zookeeper]
+[zk: zk-1:2181(CONNECTED) 0] create /node_1 123
+Node already exists: /node_1
+[zk: zk-1:2181(CONNECTED) 1] get /node_1
+123
+cZxid = 0x100000002
+ctime = Sat Aug 11 08:08:53 GMT 2018
+mZxid = 0x100000002
+mtime = Sat Aug 11 08:08:53 GMT 2018
+pZxid = 0x10000001d
+cversion = 2
+dataVersion = 0
+aclVersion = 0
+ephemeralOwner = 0x0
+dataLength = 3
+numChildren = 0
+[zk: zk-1:2181(CONNECTED) 2] quit
+
+bash-4.4# zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /conf/zoo.cfg
+Mode: follower
 ```
 
 ### Trouble shooting
 
-- Zookeeper boot failure cause of k8s virtual ip
+- Edit /etc/hosts
 
 ```sh
-        - name: ZOO_SERVERS
-          # notices!!! k8s use virtual ip, ZOO_SERVERS variables value local pod must use 0.0.0.0 as the ip address, can not use hostname.
-          # Otherwise ilocal pod zookeeper will boot failure and throw this exception:
-          # ERROR [zk1/10.0.0.251:3888:QuorumCnxManager$Listener@547] - Exception while listening
-          # java.net.BindException: Address not available (Bind failed)
-          value: server.1=0.0.0.0:2888:3888 server.2=zk2:2888:3888 server.3=zk3:2888:3888
+bash-4.4# vi /etc/hosts
+
+172.18.55.2     zk-1
+172.18.101.3    zk-2
+172.18.87.3     zk-3
 ```
