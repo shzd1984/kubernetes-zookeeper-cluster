@@ -4,7 +4,7 @@ apiVersion: extensions/v1beta1
 metadata:
   name: zk-1
   # 设置归属的namespace
-  # namespace: testing
+  namespace: production
 spec:
   replicas: 1
   template:
@@ -26,7 +26,7 @@ spec:
             path: /etc/localtime
       containers:
       - name: zk-1
-        image: zookeeper
+        image: registry-vpc.cn-hangzhou.aliyuncs.com/gchoice/zookeeper:3.4.13
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: zk-data
@@ -42,6 +42,13 @@ spec:
         - containerPort: 2181
         - containerPort: 2888
         - containerPort: 3888
+        resources:
+          #requests:
+            #cpu: 0.05
+            #memory: 16Mi
+          limits:
+            cpu: 0.2
+            memory: 256Mi
         #command: ['tail', '-f', '/etc/hosts']
         env:
         - name: ZOO_MY_ID
@@ -62,7 +69,7 @@ apiVersion: extensions/v1beta1
 metadata:
   name: zk-2
   # 设置归属的namespace
-  # namespace: testing
+  namespace: production
 spec:
   replicas: 1
   template:
@@ -84,7 +91,7 @@ spec:
             path: /etc/localtime
       containers:
       - name: zk-2
-        image: zookeeper
+        image: registry-vpc.cn-hangzhou.aliyuncs.com/gchoice/zookeeper:3.4.13
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: zk-data
@@ -100,6 +107,13 @@ spec:
         - containerPort: 2181
         - containerPort: 2888
         - containerPort: 3888
+        resources:
+          #requests:
+            #cpu: 0.05
+            #memory: 16Mi
+          limits:
+            cpu: 0.2
+            memory: 256Mi
         #command: ['tail', '-f', '/etc/hosts']
         env:
         - name: ZOO_MY_ID
@@ -120,7 +134,7 @@ apiVersion: extensions/v1beta1
 metadata:
   name: zk-3
   # 设置归属的namespace
-  # namespace: testing
+  namespace: production
 spec:
   replicas: 1
   template:
@@ -142,7 +156,7 @@ spec:
             path: /etc/localtime
       containers:
       - name: zk-3
-        image: zookeeper
+        image: registry-vpc.cn-hangzhou.aliyuncs.com/gchoice/zookeeper:3.4.13
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: zk-data
@@ -158,6 +172,13 @@ spec:
         - containerPort: 2181
         - containerPort: 2888
         - containerPort: 3888
+        resources:
+          #requests:
+            #cpu: 0.05
+            #memory: 16Mi
+          limits:
+            cpu: 0.2
+            memory: 256Mi
         #command: ['tail', '-f', '/etc/hosts']
         env:
         - name: ZOO_MY_ID
