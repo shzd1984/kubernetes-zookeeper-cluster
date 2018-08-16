@@ -3,6 +3,8 @@ kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
   name: zk-1
+  # 设置归属的namespace
+  namespace: testing
 spec:
   replicas: 1
   template:
@@ -19,6 +21,9 @@ spec:
         - name: zk-logs
           hostPath:
             path: /disk01/data/zk-cluster/zk-logs-1
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
       containers:
       - name: zk-1
         image: zookeeper
@@ -30,6 +35,9 @@ spec:
         - name: zk-logs
           readOnly: false
           mountPath: "/data/zk-logs"
+        - name: localtime
+          readOnly: true
+          mountPath: "/etc/localtime"
         ports:
         - containerPort: 2181
         - containerPort: 2888
@@ -53,6 +61,8 @@ kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
   name: zk-2
+  # 设置归属的namespace
+  namespace: testing
 spec:
   replicas: 1
   template:
@@ -69,6 +79,9 @@ spec:
         - name: zk-logs
           hostPath:
             path: /disk01/data/zk-cluster/zk-logs-2
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
       containers:
       - name: zk-2
         image: zookeeper
@@ -80,6 +93,9 @@ spec:
         - name: zk-logs
           readOnly: false
           mountPath: "/data/zk-logs"
+        - name: localtime
+          readOnly: true
+          mountPath: "/etc/localtime"
         ports:
         - containerPort: 2181
         - containerPort: 2888
@@ -103,6 +119,8 @@ kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
   name: zk-3
+  # 设置归属的namespace
+  namespace: testing
 spec:
   replicas: 1
   template:
@@ -119,6 +137,9 @@ spec:
         - name: zk-logs
           hostPath:
             path: /disk01/data/zk-cluster/zk-logs-3
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
       containers:
       - name: zk-3
         image: zookeeper
@@ -130,6 +151,9 @@ spec:
         - name: zk-logs
           readOnly: false
           mountPath: "/data/zk-logs"
+        - name: localtime
+          readOnly: true
+          mountPath: "/etc/localtime"
         ports:
         - containerPort: 2181
         - containerPort: 2888
