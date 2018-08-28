@@ -47,8 +47,8 @@ spec:
             #cpu: 0.05
             #memory: 16Mi
           limits:
-            cpu: 0.2
-            memory: 256Mi
+            cpu: 1
+            memory: 1024Mi
         #command: ['tail', '-f', '/etc/hosts']
         env:
         - name: ZOO_MY_ID
@@ -112,8 +112,8 @@ spec:
             #cpu: 0.05
             #memory: 16Mi
           limits:
-            cpu: 0.2
-            memory: 256Mi
+            cpu: 1
+            memory: 1024Mi
         #command: ['tail', '-f', '/etc/hosts']
         env:
         - name: ZOO_MY_ID
@@ -177,8 +177,8 @@ spec:
             #cpu: 0.05
             #memory: 16Mi
           limits:
-            cpu: 0.2
-            memory: 256Mi
+            cpu: 1
+            memory: 1024Mi
         #command: ['tail', '-f', '/etc/hosts']
         env:
         - name: ZOO_MY_ID
