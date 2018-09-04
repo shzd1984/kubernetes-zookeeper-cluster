@@ -1,0 +1,194 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: testing-zk-1
+  # 设置归属的namespace
+  namespace: testing
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: testing-zk
+        node: node1
+    spec:
+      hostname: testing-zk-1
+      volumes:
+        - name: zk-data
+          hostPath:
+            path: /disk01/testing/data/zk-cluster/zk-data-1
+        - name: zk-logs
+          hostPath:
+            path: /disk01/testing/data/zk-cluster/zk-logs-1
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+      containers:
+      - name: testing-zk-1
+        image: registry-vpc.cn-hangzhou.aliyuncs.com/gchoice/zookeeper:3.4.13
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: zk-data
+          readOnly: false
+          mountPath: "/data/zk-data"
+        - name: zk-logs
+          readOnly: false
+          mountPath: "/data/zk-logs"
+        - name: localtime
+          readOnly: true
+          mountPath: "/etc/localtime"
+        ports:
+        - containerPort: 2181
+        - containerPort: 2888
+        - containerPort: 3888
+        resources:
+          #requests:
+            #cpu: 0.05
+            #memory: 16Mi
+          limits:
+            cpu: 1
+            memory: 1024Mi
+        #command: ['tail', '-f', '/etc/hosts']
+        env:
+        - name: ZOO_MY_ID
+          value: '1'
+        - name: ZOO_SERVERS
+          # 注意！！k8s使用到virtual ip，因此，本机必须使用0.0.0.0 ip地址，否则本机zk启动会异常：
+          # ERROR [zk1/10.0.0.251:3888:QuorumCnxManager$Listener@547] - Exception while listening
+          # java.net.BindException: Address not available (Bind failed)错误
+          value: server.1=0.0.0.0:2888:3888 server.2=testing-zk-2:2888:3888 server.3=testing-zk-3:2888:3888
+        - name: ZOO_DATA_DIR
+          value: '/data/zk-data'
+        - name: ZOO_DATA_LOG_DIR
+          value: '/data/zk-logs'
+
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: testing-zk-2
+  # 设置归属的namespace
+  namespace: testing
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: testing-zk
+        node: node2
+    spec:
+      hostname: testing-zk-2
+      volumes:
+        - name: zk-data
+          hostPath:
+            path: /disk01/testing/data/zk-cluster/zk-data-2
+        - name: zk-logs
+          hostPath:
+            path: /disk01/testing/data/zk-cluster/zk-logs-2
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+      containers:
+      - name: testing-zk-2
+        image: registry-vpc.cn-hangzhou.aliyuncs.com/gchoice/zookeeper:3.4.13
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: zk-data
+          readOnly: false
+          mountPath: "/data/zk-data"
+        - name: zk-logs
+          readOnly: false
+          mountPath: "/data/zk-logs"
+        - name: localtime
+          readOnly: true
+          mountPath: "/etc/localtime"
+        ports:
+        - containerPort: 2181
+        - containerPort: 2888
+        - containerPort: 3888
+        resources:
+          #requests:
+            #cpu: 0.05
+            #memory: 16Mi
+          limits:
+            cpu: 1
+            memory: 1024Mi
+        #command: ['tail', '-f', '/etc/hosts']
+        env:
+        - name: ZOO_MY_ID
+          value: '2'
+        - name: ZOO_SERVERS
+          # 注意！！k8s使用到virtual ip，因此，本机必须使用0.0.0.0 ip地址，否则本机zk启动会异常：
+          # ERROR [zk1/10.0.0.251:3888:QuorumCnxManager$Listener@547] - Exception while listening
+          # java.net.BindException: Address not available (Bind failed)错误
+          value: server.1=testing-zk-1:2888:3888 server.2=0.0.0.0:2888:3888 server.3=testing-zk-3:2888:3888
+        - name: ZOO_DATA_DIR
+          value: '/data/zk-data'
+        - name: ZOO_DATA_LOG_DIR
+          value: '/data/zk-logs'
+
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: testing-zk-3
+  # 设置归属的namespace
+  namespace: testing
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: testing-zk
+        node: node3
+    spec:
+      hostname: testing-zk-3
+      volumes:
+        - name: zk-data
+          hostPath:
+            path: /disk01/testing/data/zk-cluster/zk-data-3
+        - name: zk-logs
+          hostPath:
+            path: /disk01/testing/data/zk-cluster/zk-logs-3
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+      containers:
+      - name: testing-zk-3
+        image: registry-vpc.cn-hangzhou.aliyuncs.com/gchoice/zookeeper:3.4.13
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: zk-data
+          readOnly: false
+          mountPath: "/data/zk-data"
+        - name: zk-logs
+          readOnly: false
+          mountPath: "/data/zk-logs"
+        - name: localtime
+          readOnly: true
+          mountPath: "/etc/localtime"
+        ports:
+        - containerPort: 2181
+        - containerPort: 2888
+        - containerPort: 3888
+        resources:
+          #requests:
+            #cpu: 0.05
+            #memory: 16Mi
+          limits:
+            cpu: 1
+            memory: 1024Mi
+        #command: ['tail', '-f', '/etc/hosts']
+        env:
+        - name: ZOO_MY_ID
+          value: '3'
+        - name: ZOO_SERVERS
+          # 注意！！k8s使用到virtual ip，因此，本机必须使用0.0.0.0 ip地址，否则本机zk启动会异常：
+          # ERROR [zk1/10.0.0.251:3888:QuorumCnxManager$Listener@547] - Exception while listening
+          # java.net.BindException: Address not available (Bind failed)错误
+          value: server.1=testing-zk-1:2888:3888 server.2=testing-zk-2:2888:3888 server.3=0.0.0.0:2888:3888
+        - name: ZOO_DATA_DIR
+          value: '/data/zk-data'
+        - name: ZOO_DATA_LOG_DIR
+          value: '/data/zk-logs'
